@@ -1,0 +1,164 @@
+<html>
+<head>
+<canvas id='c' style = 'position: absolute; left: 0px; top: 100px;' >
+</canvas>
+
+<script>
+var row1="O B M K A T A M A R I O C C S F T P H S ";
+				row2="S M G S W G B O J K O N U U R I I A J D ";
+				row3="T K H V O O N V X H O D L Z B E L S D O ";
+				row4="E D I E P O N A Z R E U D L N X E D B C ";
+				row5="V V Y E S M T I M N C I V E L A B P C B ";
+				row6="E O C X S B K A S O W B S O R E T S E W ";
+				row7="S U M I N A N X C T F R I E K P H B K R ";
+				row8="M S B S T D X S T G K B A R N V U A M I ";
+				row9="O V G U Y I G K H N B O O P D B V L D R ";
+				row10="M U P N E K T U P I H K P Y T M E S G M ";
+				row11="H M Z O G J T A F F N R Q L R U A R U A ";
+				row12="G L A R O F B R N F C R Z K S K R N G R ";
+				row13="L G W T J W I U C U A L A Y R N M E A K ";
+				row14="U Q J A B T A M B L X V A T L Y X V S H ";
+				row15="R O L P H R R L Y B K J E P T F X L J A ";
+				row16="E M M Y J O O Z K N F R V N T A E O E M ";
+				row17="A P Q I D E Z L N E V C A H G R R R L S ";
+				row18="V M Z R T G Z M I B R N U T A E A D I R ";
+				row19="E E O N Z I C G L A K S L E S K R P I F ";
+				row20="R M F A T P Z C B I Z D T A J O F S W S ";
+		
+			var textArray=[row1,row2,row3,row4,row5,row6,row7,row8,row9,row10,row11,row12,row13,row14,row15,row16,row17,row18,row19,row20];
+			var textString=row1+row2+row3+row4+row5+row6+row7+row8+row9+row10+row11+row12+row13+row14+row15+row16+row17+row18+row19+row20;
+			var textX=100;
+			var textY=100;			
+			//var pop = form.population.value;
+			var winWidth = window.innerWidth
+			|| document.documentElement.clientWidth
+			|| document.body.clientWidth;
+
+			var winHeight = window.innerHeight
+			|| document.documentElement.clientHeight
+			|| document.body.clientHeight;
+			htmlCanvas = document.getElementById('c'),
+
+			htmlCanvas.width = winWidth;
+			htmlCanvas.height = winHeight;
+			
+			//fontSize=15;
+			//context.font=fontSize.toString().concat("px")+" consolas";
+			
+			context = htmlCanvas.getContext('2d');
+			fontSize=15;
+			horzLetterSpacing=fontSize*22/20;
+			vertLetterSpacing=fontSize*38/20-2;
+			context.font=fontSize.toString().concat("px")+" consolas";
+			
+			context.strokeStyle = 'rgba(0, 100, 0, 0.25)';
+			
+			context.lineCap = 'round';
+			context.lineWidth=fontSize;
+			
+			var letterWidth=8;
+			var letterHeight=15;
+			xOffset=0;
+			yOffset=0;
+
+
+function clearScreen(){
+context.clearRect(0,0,1000,1000);
+}
+
+			
+			
+			
+function displayTextBlock(){
+	for(var i=0;i<20;i++){
+		context.fillText(textArray[i],textX,textY+i*fontSize);
+		}
+		
+}
+
+function checkDirectionForWord( textBlock,word,checkPosition,deltaX,deltaY){
+
+		var wordFound=true;
+		//if(entry!=" "){
+			for(var i=0;i<word.length;i++){
+				if(word[i]!=textBlock[checkPosition+2*i*deltaX+40*i*deltaY]){
+					wordFound=false;
+					//alert("not found at index:"+ checkPosition);
+					break;		
+				}
+
+		}
+		if (wordFound){
+			alert("Word found!");
+			var wordStartX=(checkPosition%40)+1;
+				wordStartY=(checkPosition-(checkPosition%40))/40*fontSize;
+		
+			context.beginPath(); 
+			context.moveTo(wordStartX/2*horzLetterSpacing+textX,textY+wordStartY-fontSize/3);
+			context.lineTo(textX+wordStartX/2*horzLetterSpacing+horzLetterSpacing*(word.length-1)*deltaX,textY-fontSize/3+wordStartY+vertLetterSpacing/2*word.length*deltaY);
+			context.stroke();
+			return 1;
+		}
+		else{
+		return 0;
+		}
+	}
+
+function checkForWord( textToCheckIn,wordToCheckFor){
+	var wordsFound=0;
+	for(var i=0;i<textToCheckIn.length;i++){
+	  if(textToCheckIn[i]!=" "){
+		if(wordToCheckFor!=""){
+		wordsFound+=checkDirectionForWord(textToCheckIn,wordToCheckFor,i,1,0);
+		wordsFound+=checkDirectionForWord(textToCheckIn,wordToCheckFor,i,1,1);
+		wordsFound+=checkDirectionForWord(textToCheckIn,wordToCheckFor,i,0,1);
+		wordsFound+=checkDirectionForWord(textToCheckIn,wordToCheckFor,i,-1,1);
+		wordsFound+=checkDirectionForWord(textToCheckIn,wordToCheckFor,i,-1,0);
+		wordsFound+=checkDirectionForWord(textToCheckIn,wordToCheckFor,i,-1,-1);
+		wordsFound+=checkDirectionForWord(textToCheckIn,wordToCheckFor,i,0,-1);
+		wordsFound+=checkDirectionForWord(textToCheckIn,wordToCheckFor,i,1,-1);
+		}
+	  }
+	}
+	if(wordsFound==0){
+	alert("Word not found!");
+	}
+}
+
+
+
+
+
+
+function myFunction(form) {
+var wordToFind = form.Word.value.toString().toUpperCase().trim();
+clearScreen();
+displayTextBlock();
+checkForWord(textString,wordToFind);
+  
+}
+
+
+
+</script>
+
+
+
+</head>
+
+<body onload="displayTextBlock()">
+
+
+
+<FORM>
+<h2>Word Search</h2>
+Enter word to search for: 
+<INPUT NAME="Word" VALUE="" MAXLENGTH="15" SIZE=15>
+<p>
+Click this button to search:
+<INPUT NAME="findButton" VALUE="FIND WORD" TYPE=BUTTON 
+onClick=myFunction(this.form)>
+
+</FORM>
+</body>
+</html>
